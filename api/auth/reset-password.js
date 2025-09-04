@@ -7,6 +7,13 @@ const HUBSPOT_ACCESS_TOKEN = process.env.HUBSPOT_ACCESS_TOKEN;
 
 if (!HUBDB_TABLE_ID || !HUBSPOT_ACCESS_TOKEN) {
   console.error("HUBSPOT_TABLE and HUBSPOT_ACCESS_TOKEN must be set");
+  // Return a function that handles missing environment variables
+  module.exports = async (req, res) => {
+    res.status(500).json({
+      error: "Server configuration error: HubSpot credentials not configured",
+    });
+  };
+  return;
 }
 
 // Utility functions
