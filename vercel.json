@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.ts"
+    }
+  ],
+  "env": {
+    "HUBSPOT_ACCESS_TOKEN": "@hubspot_access_token",
+    "HUBSPOT_TABLE": "@hubspot_table"
+  }
+}

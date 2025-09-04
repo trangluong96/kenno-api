@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kenno Password Reset - HubSpot Integration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Custom styles for HubSpot theme integration */
+      .kenno-form-container {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+      }
+
+      .kenno-btn {
+        transition: all 0.2s ease-in-out;
+      }
+
+      .kenno-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .kenno-input:focus {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-900 text-center mb-8">
+          Kenno Password Reset Integration
+        </h1>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <!-- Password Reset Form -->
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">
+              Password Reset Form
+            </h2>
+            <div id="kenno-password-reset"></div>
+          </div>
+
+          <!-- Integration Instructions -->
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">
+              Integration Instructions
+            </h2>
+
+            <div class="space-y-4">
+              <div>
+                <h3 class="font-medium text-gray-900">
+                  1. Add to HubSpot Theme
+                </h3>
+                <p class="text-sm text-gray-600 mt-1">
+                  Include the client-reset-password.js file in your HubSpot
+                  theme's assets.
+                </p>
+              </div>
+
+              <div>
+                <h3 class="font-medium text-gray-900">
+                  2. Add Container Element
+                </h3>
+                <p class="text-sm text-gray-600 mt-1">
+                  Add this HTML element where you want the password reset form
+                  to appear:
+                </p>
+                <code class="block bg-gray-100 p-2 rounded text-xs mt-1">
+                  &lt;div id="kenno-password-reset"&gt;&lt;/div&gt;
+                </code>
+              </div>
+
+              <div>
+                <h3 class="font-medium text-gray-900">
+                  3. Configure API Base URL
+                </h3>
+                <p class="text-sm text-gray-600 mt-1">
+                  Update the baseURL in the client code to point to your
+                  deployed Vercel API.
+                </p>
+              </div>
+
+              <div>
+                <h3 class="font-medium text-gray-900">4. HubDB Integration</h3>
+                <p class="text-sm text-gray-600 mt-1">
+                  The form automatically integrates with your existing HubSpot
+                  theme styling and can be customized using HubDB fields.
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+              <h4 class="font-medium text-blue-900 mb-2">
+                HubDB Field Example:
+              </h4>
+              <p class="text-sm text-blue-800">
+                You can use HubDB fields to customize form text, styling, and
+                redirect URLs:
+              </p>
+              <code class="block bg-blue-100 p-2 rounded text-xs mt-2">
+                {% set resetConfig = hubdb_table_row(table_id, row_id) %}
+                &lt;div id="kenno-password-reset" data-config='{{
+                resetConfig|tojson }}'&gt;&lt;/div&gt;
+              </code>
+            </div>
+          </div>
+        </div>
+
+        <!-- API Endpoints Documentation -->
+        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">
+            API Endpoints
+          </h2>
+
+          <div class="space-y-4">
+            <div class="border-l-4 border-blue-500 pl-4">
+              <h3 class="font-medium text-gray-900">
+                POST /api/auth/request-reset-password
+              </h3>
+              <p class="text-sm text-gray-600 mt-1">
+                Request a password reset email
+              </p>
+              <code class="block bg-gray-100 p-2 rounded text-xs mt-1">
+                { "email": "user@example.com" }
+              </code>
+            </div>
+
+            <div class="border-l-4 border-green-500 pl-4">
+              <h3 class="font-medium text-gray-900">
+                POST /api/auth/verify-reset-token
+              </h3>
+              <p class="text-sm text-gray-600 mt-1">Verify a reset token</p>
+              <code class="block bg-gray-100 p-2 rounded text-xs mt-1">
+                { "token": "reset-token-here" }
+              </code>
+            </div>
+
+            <div class="border-l-4 border-purple-500 pl-4">
+              <h3 class="font-medium text-gray-900">
+                POST /api/auth/confirm-reset-password
+              </h3>
+              <p class="text-sm text-gray-600 mt-1">
+                Confirm password reset with new password
+              </p>
+              <code class="block bg-gray-100 p-2 rounded text-xs mt-1">
+                { "token": "reset-token-here", "newPassword": "newPassword123" }
+              </code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Usage Examples -->
+        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">
+            Usage Examples
+          </h2>
+
+          <div class="space-y-4">
+            <div>
+              <h3 class="font-medium text-gray-900">Basic Integration</h3>
+              <pre
+                class="bg-gray-100 p-4 rounded text-sm overflow-x-auto"
+              ><code>// The form automatically initializes when the container is found
+document.addEventListener('DOMContentLoaded', () => {
+    const resetContainer = document.getElementById('kenno-password-reset');
+    if (resetContainer) {
+        new KennoPasswordResetForm('kenno-password-reset');
+    }
+});</code></pre>
+            </div>
+
+            <div>
+              <h3 class="font-medium text-gray-900">Custom Configuration</h3>
+              <pre
+                class="bg-gray-100 p-4 rounded text-sm overflow-x-auto"
+              ><code>// Custom configuration
+const form = new KennoPasswordResetForm('kenno-password-reset', {
+    baseURL: 'https://your-custom-domain.com',
+    redirectUrl: '/custom-login-page'
+});</code></pre>
+            </div>
+
+            <div>
+              <h3 class="font-medium text-gray-900">Direct Token Reset</h3>
+              <pre
+                class="bg-gray-100 p-4 rounded text-sm overflow-x-auto"
+              ><code>// For direct reset links (e.g., from email)
+// URL: /reset-password?token=abc123
+const urlParams = new URLSearchParams(window.location.search);
+const resetToken = urlParams.get('token');
+
+if (resetToken) {
+    const form = new KennoPasswordResetForm('kenno-password-reset');
+    form.resetToken = resetToken;
+    form.currentStep = 'confirm';
+    form.render();
+    form.bindEvents();
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include the password reset client script -->
+    <script src="client-reset-password.js"></script>
+
+    <script>
+      // Example of custom configuration
+      document.addEventListener("DOMContentLoaded", () => {
+        // You can customize the form behavior here
+        console.log("Kenno Password Reset Form loaded successfully!");
+
+        // Example: Custom event handling
+        document.addEventListener("passwordResetRequested", (e) => {
+          console.log("Password reset requested for:", e.detail.email);
+        });
+
+        document.addEventListener("passwordResetCompleted", (e) => {
+          console.log("Password reset completed for:", e.detail.email);
+        });
+      });
+    </script>
+  </body>
+</html>
