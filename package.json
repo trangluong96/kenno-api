@@ -2,31 +2,27 @@
   "name": "kenno-api",
   "version": "1.0.0",
   "description": "Kenno API Server for HubSpot CMS Integration",
-  "main": "api/index.ts",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "tsc",
-    "serve": "ts-node api/index.ts",
-    "serve:dev": "nodemon --exec ts-node api/index.ts",
-    "test": "node test-server.js",
-    "vercel-build": "npm run build"
+    "test": "node test-server.js"
   },
-  "keywords": ["hubspot", "api", "express", "password-reset"],
+  "keywords": [
+    "hubspot",
+    "api",
+    "express",
+    "password-reset"
+  ],
   "author": "Saigon Digital",
   "license": "ISC",
   "dependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.3",
-    "@types/node": "^24.3.0",
     "axios": "^1.11.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "node-fetch": "^3.3.2",
-    "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "nodemon": "^3.1.10"
   },
   "engines": {
     "node": ">=20.0.0"
