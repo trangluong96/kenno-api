@@ -61,7 +61,8 @@ const getUserByEmail = async (email) => {
 
 const updateUser = async (userId, updates) => {
   try {
-    await axios.patch(
+    console.log("Updating user:", userId, "with data:", updates);
+    const response = await axios.patch(
       `${HUBDB_API_URL}/tables/${HUBDB_TABLE_ID}/rows/${userId}`,
       { values: updates },
       {
@@ -71,9 +72,10 @@ const updateUser = async (userId, updates) => {
         },
       }
     );
+    console.log("Update successful:", response.data);
     return true;
   } catch (error) {
-    console.error("Error updating user:", error);
+    console.error("Error updating user:", error.response?.data || error.message);
     return false;
   }
 };
