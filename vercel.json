@@ -11,9 +11,5 @@
       "src": "/api/(.*)",
       "dest": "/api/index.ts"
     }
-  ],
-  "env": {
-    "HUBSPOT_ACCESS_TOKEN": "@hubspot_access_token",
-    "HUBSPOT_TABLE": "@hubspot_table"
-  }
+  ]
 }
