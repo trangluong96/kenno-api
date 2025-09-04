@@ -63,7 +63,7 @@ const updateUser = async (userId, updates) => {
   try {
     console.log("Updating user:", userId, "with data:", updates);
     const response = await axios.patch(
-      `${HUBDB_API_URL}/tables/${HUBDB_TABLE_ID}/rows/${userId}`,
+      `${HUBDB_API_URL}/tables/${HUBDB_TABLE_ID}/rows/${userId}/draft`,
       { values: updates },
       {
         headers: {
@@ -75,7 +75,10 @@ const updateUser = async (userId, updates) => {
     console.log("Update successful:", response.data);
     return true;
   } catch (error) {
-    console.error("Error updating user:", error.response?.data || error.message);
+    console.error(
+      "Error updating user:",
+      error.response?.data || error.message
+    );
     return false;
   }
 };
