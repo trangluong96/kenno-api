@@ -123,10 +123,36 @@ module.exports = async (req, res) => {
     // Hash the provided password and compare with stored hash
     const hashedPassword = hashPassword(password);
 
+    // Check if stored password matches the hashed version
     if (user.password !== hashedPassword) {
-      return res.status(401).json({
-        error: "Invalid email or password",
-      });
+      // If not, check if stored password is plain text (for backward compatibility)
+      if (user.password !== password) {
+        return res.status(401).json({
+          error: "Invalid email or password",
+        });
+      }
+
+      // If it's plain text, update it to hashed format for future logins
+      console.log(
+        "Converting plain text password to hash for user:",
+        user.email
+      );
+      try {
+        const updateResponse = await axios.patch(
+          `${HUBDB_API_URL}/tables/${HUBDB_TABLE_ID}/rows/${user.id}/draft`,
+          { values: { password: hashedPassword } },
+          {
+            headers: {
+              Authorization: `Bearer ${HUBSPOT_ACCESS_TOKEN}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("Password converted to hash successfully");
+      } catch (updateError) {
+        console.error("Error converting password to hash:", updateError);
+        // Continue with login even if update fails
+      }
     }
 
     // Login successful

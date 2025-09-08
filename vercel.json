@@ -4,7 +4,13 @@
     "api/health.js": {
       "maxDuration": 10
     },
+    "api/auth/login.js": {
+      "maxDuration": 30
+    },
     "api/auth/reset-password.js": {
+      "maxDuration": 30
+    },
+    "api/index.ts": {
       "maxDuration": 30
     }
   }

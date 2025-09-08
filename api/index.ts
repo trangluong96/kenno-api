@@ -161,10 +161,15 @@ app.post("/api/auth/reset-password", async (req, res) => {
       return res.status(400).json({ error: "User not found" });
     }
 
-    // Verify old password
+    // Verify old password - handle both hashed and plain text formats
     const hashedOldPassword = hashPassword(oldPassword);
     if (user.password !== hashedOldPassword) {
-      return res.status(400).json({ error: "Invalid old password" });
+      // If not hashed, check if stored password is plain text (for backward compatibility)
+      if (user.password !== oldPassword) {
+        return res.status(400).json({ error: "Invalid old password" });
+      }
+      // If it's plain text, we'll convert it to hashed format with the new password
+      console.log("Old password was plain text, converting to hash format");
     }
 
     // Hash new password and update user
@@ -203,10 +208,15 @@ app.post("/api/auth/change-password", async (req, res) => {
       return res.status(400).json({ error: "User not found" });
     }
 
-    // Verify current password
+    // Verify current password - handle both hashed and plain text formats
     const hashedCurrentPassword = hashPassword(currentPassword);
     if (user.password !== hashedCurrentPassword) {
-      return res.status(400).json({ error: "Invalid current password" });
+      // If not hashed, check if stored password is plain text (for backward compatibility)
+      if (user.password !== currentPassword) {
+        return res.status(400).json({ error: "Invalid current password" });
+      }
+      // If it's plain text, we'll convert it to hashed format with the new password
+      console.log("Current password was plain text, converting to hash format");
     }
 
     // Hash new password and update user
