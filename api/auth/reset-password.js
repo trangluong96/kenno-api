@@ -25,7 +25,7 @@ const hashPassword = (password) => {
     hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
-  return hash.toString();
+  return Math.abs(hash).toString(16);
 };
 
 const getUserByEmail = async (email) => {

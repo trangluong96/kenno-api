@@ -25,7 +25,7 @@ const hashPassword = (password) => {
     hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
-  return hash.toString();
+  return Math.abs(hash).toString(16);
 };
 
 const getUserByEmail = async (email) => {
@@ -122,7 +122,7 @@ module.exports = async (req, res) => {
 
     // Hash the provided password and compare with stored hash
     const hashedPassword = hashPassword(password);
-    
+
     if (user.password !== hashedPassword) {
       return res.status(401).json({
         error: "Invalid email or password",
@@ -138,7 +138,6 @@ module.exports = async (req, res) => {
         name: user.name,
       },
     });
-
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({
