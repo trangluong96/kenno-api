@@ -102,11 +102,11 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { email, newPassword } = req.body;
+    const { email, oldPassword, newPassword } = req.body;
 
-    if (!email || !newPassword) {
+    if (!email || !oldPassword || !newPassword) {
       return res.status(400).json({
-        error: "Email and newPassword are required",
+        error: "Email, oldPassword, and newPassword are required",
       });
     }
 
@@ -116,6 +116,17 @@ module.exports = async (req, res) => {
       return res.status(404).json({
         error: "User not found",
       });
+    }
+
+    // Verify old password - handle both hashed and plain text formats
+    const hashedOldPassword = hashPassword(oldPassword);
+    if (user.password !== hashedOldPassword) {
+      // If not hashed, check if stored password is plain text (for backward compatibility)
+      if (user.password !== oldPassword) {
+        return res.status(400).json({ error: "Invalid old password" });
+      }
+      // If it's plain text, we'll convert it to hashed format with the new password
+      console.log("Old password was plain text, converting to hash format");
     }
 
     // Hash the new password
