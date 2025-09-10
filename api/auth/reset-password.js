@@ -106,7 +106,7 @@ module.exports = async (req, res) => {
 
     if (!email || !oldPassword || !newPassword) {
       return res.status(400).json({
-        error: "Email, oldPassword, and newPassword are required",
+        error: "Email, current Password, and new Password are required",
       });
     }
 
@@ -123,10 +123,10 @@ module.exports = async (req, res) => {
     if (user.password !== hashedOldPassword) {
       // If not hashed, check if stored password is plain text (for backward compatibility)
       if (user.password !== oldPassword) {
-        return res.status(400).json({ error: "Invalid old password" });
+        return res.status(400).json({ error: "Invalid current password" });
       }
       // If it's plain text, we'll convert it to hashed format with the new password
-      console.log("Old password was plain text, converting to hash format");
+      console.log("Current password was plain text, converting to hash format");
     }
 
     // Hash the new password
