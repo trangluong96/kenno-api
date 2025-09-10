@@ -30,7 +30,32 @@ const hashPassword = (password) => {
 
 const getUserByEmail = async (email) => {
   try {
-    const response = await axios.get(
+    // First try to get from draft (where password updates are stored)
+    const draftResponse = await axios.get(
+      `${HUBDB_API_URL}/tables/${HUBDB_TABLE_ID}/rows/draft`,
+      {
+        headers: {
+          Authorization: `Bearer ${HUBSPOT_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        params: {
+          email: email,
+        },
+      }
+    );
+
+    if (draftResponse.data.results.length > 0) {
+      const row = draftResponse.data.results[0];
+      return {
+        id: row.id,
+        email: row.values.email,
+        password: row.values.password,
+        name: row.values.name,
+      };
+    }
+
+    // If not found in draft, try published version
+    const publishedResponse = await axios.get(
       `${HUBDB_API_URL}/tables/${HUBDB_TABLE_ID}/rows`,
       {
         headers: {
@@ -43,8 +68,8 @@ const getUserByEmail = async (email) => {
       }
     );
 
-    if (response.data.results.length > 0) {
-      const row = response.data.results[0];
+    if (publishedResponse.data.results.length > 0) {
+      const row = publishedResponse.data.results[0];
       return {
         id: row.id,
         email: row.values.email,
@@ -52,6 +77,7 @@ const getUserByEmail = async (email) => {
         name: row.values.name,
       };
     }
+
     return null;
   } catch (error) {
     console.error("Error fetching user:", error);
@@ -120,9 +146,21 @@ module.exports = async (req, res) => {
 
     // Verify old password - handle both hashed and plain text formats
     const hashedOldPassword = hashPassword(oldPassword);
+    console.log("Debug - Stored password:", user.password);
+    console.log("Debug - Provided password:", oldPassword);
+    console.log("Debug - Hashed provided password:", hashedOldPassword);
+
     if (user.password !== hashedOldPassword) {
       // If not hashed, check if stored password is plain text (for backward compatibility)
       if (user.password !== oldPassword) {
+        console.log(
+          "Debug - Password mismatch: stored=",
+          user.password,
+          "provided=",
+          oldPassword,
+          "hashed=",
+          hashedOldPassword
+        );
         return res.status(400).json({ error: "Invalid current password" });
       }
       // If it's plain text, we'll convert it to hashed format with the new password
